@@ -17,6 +17,8 @@
 include Puppet::Util::Diff
 
 Puppet::Type.newtype(:concat_fragment) do
+  ensurable
+
   @doc = "Create a concat fragment"
 
   newproperty(:content) do
