@@ -36,4 +36,16 @@ Puppet::Type.type(:concat_fragment).provide :concat_fragment do
       fail Puppet::Error, e
     end
   end
+  
+  def destroy
+    group = @resource[:name].split('+').first
+    fragment = @resource[:name].split('+')[1..-1].join('+')
+    File.delete("/var/lib/puppet/concat/fragments/#{group}/#{fragment}")
+  end
+  
+  def exists?
+    group = @resource[:name].split('+').first
+    fragment = @resource[:name].split('+')[1..-1].join('+')
+    File.exists?("/var/lib/puppet/concat/fragments/#{group}/#{fragment}")
+  end
 end
