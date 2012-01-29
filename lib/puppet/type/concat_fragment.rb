@@ -13,6 +13,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+include Puppet::Util::Diff
+
 Puppet::Type.newtype(:concat_fragment) do
   @doc = "Create a concat fragment"
 
@@ -23,7 +26,19 @@ Puppet::Type.newtype(:concat_fragment) do
     end
 
     def insync?(is)
-      return false
+      group = @resource[:name].split('+').first
+      fragment = @resource[:name].split('+')[1..-1].join('+')
+      frag_file = "/var/lib/puppet/concat/fragments/#{group}/#{fragment}"
+
+      if File.exist?(frag_file)
+        data = File.read(frag_file)
+        if data == @resource[:content] then
+          debug "Disk contents differ from resource content for #{@resource[:name]}"
+          return true
+        end
+      else
+        return false
+      end
     end
 
     def sync
