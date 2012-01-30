@@ -17,6 +17,8 @@
 include Puppet::Util::Diff
 
 Puppet::Type.newtype(:concat_build) do
+  require 'fileutils'
+
   @doc = "Build file from fragments"
 
   def extractexe(cmd)
@@ -197,6 +199,19 @@ Puppet::Type.newtype(:concat_build) do
     # resource contains all concat_fragment resources from the catalog that
     # belog to this concat_build
     resource = catalog.resources.find_all { |r| r.is_a?(Puppet::Type.type(:concat_fragment)) and r[:name] =~ /^#{self[:name]}\+.+/ }
+    
+    # Remove fragments not used on this build
+    group = self[:name]
+
+    files = []
+    resource.each do |res|
+      files << "/var/lib/puppet/concat/fragments/#{group}/"+res.name.split('+')[1..-1].join('+').to_s
+    end
+    
+    Dir.glob("/var/lib/puppet/concat/fragments/#{group}/*.tmp").each do |fragment|
+      File.delete(fragment.to_s) unless files.include? fragment.to_s
+    end
+    
     if not resource.empty? then
       req << resource
     elsif not self.quiet? then

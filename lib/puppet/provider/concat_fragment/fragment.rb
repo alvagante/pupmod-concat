@@ -25,7 +25,7 @@ Puppet::Type.type(:concat_fragment).provide :concat_fragment do
 
       if File.file?("/var/lib/puppet/concat/fragments/#{group}/.~concat_fragments") then
         debug "Purging /var/lib/puppet/concat/fragments/#{group}!"
-        FileUtils.rm_rf("/var/lib/puppet/concat/fragments/#{group}")
+        #FileUtils.rm_rf("/var/lib/puppet/concat/fragments/#{group}")
       end
 
       FileUtils.mkdir_p("/var/lib/puppet/concat/fragments/#{group}")

@@ -104,7 +104,7 @@ Puppet::Type.type(:concat_build ).provide :concat_build do
       end
     elsif File.directory?("/var/lib/puppet/concat/fragments/#{@resource[:name]}") and build then
       # This time for real - move the built file into the fragments dir
-      FileUtils.touch("/var/lib/puppet/concat/fragments/#{@resource[:name]}/.~concat_fragments")
+      # FileUtils.touch("/var/lib/puppet/concat/fragments/#{@resource[:name]}/.~concat_fragments")
       if @resource[:target] and check_onlyif then
         debug "Copying /var/lib/puppet/concat/output/#{@resource[:name]}.out to #{@resource[:target]}"
         FileUtils.cp("/var/lib/puppet/concat/output/#{@resource[:name]}.out", @resource[:target])
